@@ -1,0 +1,78 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' generator='JOSM'>
+  <bounds minlat="-0.0054932" minlon="10.5084229" maxlat="0.0054932" maxlon="10.5139160"/>
+  <node id='145' timestamp='2024-09-06T01:30:21Z' visible='true' version='1' changeset='4' lat='-0.00010489216' lon='10.5112604561' />
+  <node id='146' timestamp='2024-09-06T01:30:21Z' visible='true' version='1' changeset='4' lat='-0.00005192256' lon='10.5112604561' />
+  <node id='147' timestamp='2024-09-06T01:30:21Z' visible='true' version='1' changeset='4' lat='-0.00010489216' lon='10.5112493597' />
+  <node id='148' timestamp='2024-09-06T01:30:21Z' visible='true' version='1' changeset='4' lat='-0.00005192256' lon='10.5112493597' />
+  <node id='149' timestamp='2024-09-06T01:30:21Z' visible='true' version='1' changeset='4' lat='-0.00011556983' lon='10.5112604561' />
+  <node id='150' timestamp='2024-09-06T01:30:21Z' visible='true' version='1' changeset='4' lat='-0.00011556983' lon='10.51130714472' />
+  <node id='151' timestamp='2024-09-06T01:30:21Z' visible='true' version='1' changeset='4' lat='-0.00003915123' lon='10.51130714472' />
+  <node id='152' timestamp='2024-09-06T01:30:21Z' visible='true' version='1' changeset='4' lat='-0.00003915124' lon='10.5112604561' />
+  <node id='153' timestamp='2024-09-06T01:30:21Z' visible='true' version='1' changeset='4' lat='-0.00010552026' lon='10.51121146445' />
+  <node id='154' timestamp='2024-09-06T01:30:21Z' visible='true' version='1' changeset='4' lat='-0.00010552026' lon='10.5112493597' />
+  <node id='155' timestamp='2024-09-06T01:30:21Z' visible='true' version='1' changeset='4' lat='-0.00003789504' lon='10.5112493597' />
+  <node id='156' timestamp='2024-09-06T01:30:21Z' visible='true' version='1' changeset='4' lat='-0.00003789504' lon='10.51121146445' />
+  <node id='157' timestamp='2024-09-06T01:30:21Z' visible='true' version='1' changeset='4' lat='0.00006406621' lon='10.511259828' />
+  <node id='158' timestamp='2024-09-06T01:30:21Z' visible='true' version='1' changeset='4' lat='0.00006406621' lon='10.51130861028' />
+  <node id='159' timestamp='2024-09-06T01:30:21Z' visible='true' version='1' changeset='4' lat='0.0000370297' lon='10.51130861028' />
+  <node id='160' timestamp='2024-09-06T01:30:21Z' visible='true' version='1' changeset='4' lat='0.00001378819' lon='10.51130861028' />
+  <node id='161' timestamp='2024-09-06T01:30:21Z' visible='true' version='1' changeset='4' lat='0.00003705799' lon='10.51131175077' />
+  <node id='162' timestamp='2024-09-06T01:30:21Z' visible='true' version='1' changeset='4' lat='0.00001381837' lon='10.51131196014' />
+  <node id='163' timestamp='2024-09-06T01:30:21Z' visible='true' version='1' changeset='4' lat='0.0000129809' lon='10.51130861028' />
+  <node id='164' timestamp='2024-09-06T01:30:21Z' visible='true' version='1' changeset='4' lat='0.0000129809' lon='10.511259828' />
+  <node id='165' timestamp='2024-09-06T01:30:21Z' visible='true' version='1' changeset='4' lat='0.00008667774' lon='10.51131237887' />
+  <node id='166' timestamp='2024-09-06T01:30:21Z' visible='true' version='1' changeset='4' lat='0.00006406621' lon='10.51131237887' />
+  <node id='167' timestamp='2024-09-06T01:30:21Z' visible='true' version='1' changeset='4' lat='0.00006406621' lon='10.51125522195' />
+  <node id='168' timestamp='2024-09-06T01:30:21Z' visible='true' version='1' changeset='4' lat='0.00008667774' lon='10.51125522195' />
+  <node id='169' timestamp='2024-09-06T01:30:21Z' visible='true' version='1' changeset='4' lat='0.00008863397' lon='10.51122193489' />
+  <node id='170' timestamp='2024-09-06T01:30:21Z' visible='true' version='1' changeset='4' lat='0.00001368094' lon='10.51122214426' />
+  <node id='171' timestamp='2024-09-06T01:30:21Z' visible='true' version='1' changeset='4' lat='0.000013609' lon='10.5111963901' />
+  <node id='172' timestamp='2024-09-06T01:30:21Z' visible='true' version='1' changeset='4' lat='0.00008856203' lon='10.51119618073' />
+  <way id='18' timestamp='2024-09-06T01:30:21Z' visible='true' version='1' changeset='4'>
+    <nd ref='156' />
+    <nd ref='155' />
+    <nd ref='148' />
+    <nd ref='146' />
+    <nd ref='152' />
+    <nd ref='151' />
+    <nd ref='150' />
+    <nd ref='149' />
+    <nd ref='145' />
+    <nd ref='147' />
+    <nd ref='154' />
+    <nd ref='153' />
+    <nd ref='156' />
+    <tag k='building' v='yes' />
+    <tag k='level' v='2' />
+    <tag k='name' v='building3' />
+  </way>
+  <way id='19' timestamp='2024-09-06T01:30:21Z' visible='true' version='1' changeset='4'>
+    <nd ref='168' />
+    <nd ref='165' />
+    <nd ref='166' />
+    <nd ref='158' />
+    <nd ref='159' />
+    <nd ref='161' />
+    <nd ref='162' />
+    <nd ref='160' />
+    <nd ref='163' />
+    <nd ref='164' />
+    <nd ref='157' />
+    <nd ref='167' />
+    <nd ref='168' />
+    <tag k='building' v='yes' />
+    <tag k='level' v='2' />
+    <tag k='name' v='building2' />
+  </way>
+  <way id='20' timestamp='2024-09-06T01:30:21Z' visible='true' version='1' changeset='4'>
+    <nd ref='172' />
+    <nd ref='169' />
+    <nd ref='170' />
+    <nd ref='171' />
+    <nd ref='172' />
+    <tag k='building' v='yes' />
+    <tag k='level' v='2' />
+    <tag k='name' v='building1' />
+  </way>
+</osm>

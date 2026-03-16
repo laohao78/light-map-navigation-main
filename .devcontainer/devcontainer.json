@@ -1,0 +1,32 @@
+{
+	"name": "open",
+	"image": "open-cuda12.1-pytorch:latest",
+	"runArgs": [
+	  "--init",
+	  "--gpus=all",
+	  "--privileged",
+	  "--env=NVIDIA_DRIVER_CAPABILITIES=all",
+	  "--env=DISPLAY=${localEnv:DISPLAY}",
+	  "--env=XAUTHORITY=${localEnv:XAUTHORITY}",
+	  "--env=QT_X11_NO_MITSHM=1",
+	  "--volume=/tmp/.X11-unix:/tmp/.X11-unix:rw",
+	  "--volume=${localEnv:HOME}/.gazebo:/root/.gazebo",
+	  "--volume=/usr/share/gazebo:/usr/share/gazebo:ro",
+	  "--volume=/usr/share/gazebo-11:/usr/share/gazebo-11:ro",
+	  "--network=host",
+	  "--runtime=nvidia"
+	],
+	"customizations": {
+	  "vscode": {
+			"extensions": [
+				"llvm-vs-code-extensions.vscode-clangd",
+				"vadimcn.vscode-lldb",
+				"xaver.clang-format",
+				"ms-python.python",
+				"ms-iot.vscode-ros",
+				"ms-vscode.cmake-tools",
+				"usernamehw.errorlens"
+			]
+	  }
+	}
+}

@@ -1,0 +1,15 @@
+grounded_sam2_node:
+  ros__parameters:
+    gsam2:
+      scale: 1.0
+      do_sharpen: false
+      base_path: "/home/rm123/Desktop/openbench/light-map-navigation-main/src/grounded_sam2/grounded_sam2/grounded_sam2/"
+      text_prompt: "ground . car . building"
+      sam2_checkpoint: "./checkpoints/sam2.1_hiera_small.pt"
+      sam2_model_config: "sam2/configs/sam2.1/sam2.1_hiera_s.yaml"
+      grounding_dino_config: "grounding_dino/groundingdino/config/GroundingDINO_SwinT_OGC.py"
+      grounding_dino_checkpoint: "gdino_checkpoints/groundingdino_swint_ogc.pth"
+      box_threshold: 0.3
+      text_threshold: 0.25
+      area_threshold: 80
+      processing_rate: 10.0

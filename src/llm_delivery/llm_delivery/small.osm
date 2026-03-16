@@ -1,0 +1,78 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version="0.6" generator="libosmium/2.20.0">
+  <bounds minlat="40.4975896" minlon="116.9999211" maxlat="40.4977936" maxlon="117.0000741"/>
+  <node id="145" version="1" lat="40.4976003" lon="117.0000058" changeset="1"/>
+  <node id="146" version="1" lat="40.4976533" lon="117.0000058" changeset="1"/>
+  <node id="147" version="1" lat="40.4976003" lon="116.9999912" changeset="1"/>
+  <node id="148" version="1" lat="40.4976533" lon="116.9999912" changeset="1"/>
+  <node id="149" version="1" lat="40.4975896" lon="117.0000058" changeset="1"/>
+  <node id="150" version="1" lat="40.4975896" lon="117.0000672" changeset="1"/>
+  <node id="151" version="1" lat="40.497666" lon="117.0000672" changeset="1"/>
+  <node id="152" version="1" lat="40.497666" lon="117.0000058" changeset="1"/>
+  <node id="153" version="1" lat="40.4975997" lon="116.9999412" changeset="1"/>
+  <node id="154" version="1" lat="40.4975997" lon="116.9999912" changeset="1"/>
+  <node id="155" version="1" lat="40.4976673" lon="116.9999912" changeset="1"/>
+  <node id="156" version="1" lat="40.4976673" lon="116.9999412" changeset="1"/>
+  <node id="157" version="1" lat="40.4977691" lon="117.0000049" changeset="1"/>
+  <node id="158" version="1" lat="40.4977691" lon="117.0000691" changeset="1"/>
+  <node id="159" version="1" lat="40.4977421" lon="117.0000691" changeset="1"/>
+  <node id="160" version="1" lat="40.4977189" lon="117.0000691" changeset="1"/>
+  <node id="161" version="1" lat="40.4977422" lon="117.0000734" changeset="1"/>
+  <node id="162" version="1" lat="40.4977189" lon="117.0000736" changeset="1"/>
+  <node id="163" version="1" lat="40.4977181" lon="117.0000691" changeset="1"/>
+  <node id="164" version="1" lat="40.4977181" lon="117.0000049" changeset="1"/>
+  <node id="165" version="1" lat="40.4977917" lon="117.0000741" changeset="1"/>
+  <node id="166" version="1" lat="40.4977691" lon="117.0000741" changeset="1"/>
+  <node id="167" version="1" lat="40.4977691" lon="116.9999988" changeset="1"/>
+  <node id="168" version="1" lat="40.4977917" lon="116.9999988" changeset="1"/>
+  <node id="169" version="1" lat="40.4977936" lon="116.9999549" changeset="1"/>
+  <node id="170" version="1" lat="40.4977188" lon="116.9999552" changeset="1"/>
+  <node id="171" version="1" lat="40.4977187" lon="116.9999213" changeset="1"/>
+  <node id="172" version="1" lat="40.4977936" lon="116.9999211" changeset="1"/>
+  <way id="18" version="1" changeset="1">
+    <nd ref="156"/>
+    <nd ref="155"/>
+    <nd ref="148"/>
+    <nd ref="146"/>
+    <nd ref="152"/>
+    <nd ref="151"/>
+    <nd ref="150"/>
+    <nd ref="149"/>
+    <nd ref="145"/>
+    <nd ref="147"/>
+    <nd ref="154"/>
+    <nd ref="153"/>
+    <nd ref="156"/>
+    <tag k="building" v="yes"/>
+    <tag k="level" v="2"/>
+    <tag k="name" v="building3"/>
+  </way>
+  <way id="19" version="1" changeset="1">
+    <nd ref="168"/>
+    <nd ref="165"/>
+    <nd ref="166"/>
+    <nd ref="158"/>
+    <nd ref="159"/>
+    <nd ref="161"/>
+    <nd ref="162"/>
+    <nd ref="160"/>
+    <nd ref="163"/>
+    <nd ref="164"/>
+    <nd ref="157"/>
+    <nd ref="167"/>
+    <nd ref="168"/>
+    <tag k="building" v="yes"/>
+    <tag k="level" v="2"/>
+    <tag k="name" v="building2"/>
+  </way>
+  <way id="20" version="1" changeset="1">
+    <nd ref="172"/>
+    <nd ref="169"/>
+    <nd ref="170"/>
+    <nd ref="171"/>
+    <nd ref="172"/>
+    <tag k="building" v="yes"/>
+    <tag k="level" v="2"/>
+    <tag k="name" v="building1"/>
+  </way>
+</osm>

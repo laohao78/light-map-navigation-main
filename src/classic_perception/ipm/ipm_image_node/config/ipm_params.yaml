@@ -1,0 +1,13 @@
+ipm_image_node:
+  ros__parameters:
+    use_sim_time: true
+    output_frame: "livox_frame"
+    type: "mask"
+    scale: 1.0
+    use_distortion: false
+    plane_coefficients: [0.0, 0.0, 1.0, 0.230]
+    border_size: 5
+    kernel_size: 3
+    image_input_topic: "/grounded_sam2/mask"
+    camera_info_topic: "/camera_sensor/camera_info"
+    point_cloud_topic: "ipm_projected_point_cloud"

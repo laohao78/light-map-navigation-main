@@ -1,0 +1,11 @@
+torch 
+torchvision 
+torchaudio
+opencv-python
+supervision
+pycocotools
+transformers
+timm
+hydra-core
+addict
+yapf

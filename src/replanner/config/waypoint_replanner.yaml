@@ -1,0 +1,23 @@
+waypoint_replanner_server:
+  ros__parameters:
+    # Map and planning parameters
+    local_range: 20.0           # Local map range in meters
+    resolution: 0.05            # Map resolution in meters/pixel
+    inflation_radius: 0.2       # Obstacle inflation radius in meters
+    
+    # Height filter parameters
+    height_filter_min: -1.0     # Minimum height for point cloud filtering in meters
+    height_filter_max: 0.5      # Maximum height for point cloud filtering in meters
+    
+    # Path optimization parameters
+    search_radius: 5.0          # Search radius for obstacle detection in meters
+    num_radius_samples: 5       # Number of radius samples for path optimization
+    num_angle_samples: 11       # Number of angle samples for path optimization
+    max_sample_radius: 5.0      # Maximum sampling radius in meters
+    angle_range: 0.785398      # Angle range for sampling (pi/4 radians)
+    
+    # Cost weights for path optimization [obstacle, smoothness, position]
+    cost_weights: [0.2, 0.6, 0.2]
+    
+    # Visualization parameters
+    enable_visualization: false           # Enable/disable visualization

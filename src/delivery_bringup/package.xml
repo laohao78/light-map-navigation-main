@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>delivery_bringup</name>
+  <version>0.0.0</version>
+  <description>Delivery System Bringup</description>
+  <maintainer email="wjh_9696@163.com">root</maintainer>
+  <license>TODO: License declaration</license>
+
+  <exec_depend>ros2launch</exec_depend>
+  <exec_depend>entrance_exploration</exec_depend>
+  <exec_depend>task_planning</exec_depend>
+  <exec_depend>building_entrance_recognition</exec_depend>
+  <exec_depend>delivery_executor</exec_depend>
+
+  <test_depend>ament_copyright</test_depend>
+  <test_depend>ament_flake8</test_depend>
+  <test_depend>ament_pep257</test_depend>
+  <test_depend>python3-pytest</test_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>

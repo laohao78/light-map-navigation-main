@@ -1,0 +1,4 @@
+string prompt
+---
+string[] labels
+sensor_msgs/Image[] masks

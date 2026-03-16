@@ -1,0 +1,5 @@
+sensor_msgs/Image image      # Input image data
+---
+string entrance_id          # Detected entrance identifier
+bool success               # Whether the recognition was successful
+string message            # Error message or additional feedback

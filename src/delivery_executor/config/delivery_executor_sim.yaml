@@ -1,0 +1,13 @@
+delivery_executor_action_server:
+  ros__parameters:
+    osm_file_path: "/home/rm123/Desktop/openbench/light-map-navigation-main/src/utils_pkg/resource/osm/medium.osm"
+    osm_routing_url: "http://10.246.75.175:5000/route/v1/driving/"
+    # osm_routing_url: "http://101.200.33.217:30457/route/v1/driving/"
+    transform_matrix: [1.0, 0.0, 500000.0, 0.0, 1.0, 4483000.0, 0.0, 0.0, 1.0]
+    # transform_matrix: [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
+    service_wait_time: 1.0
+    max_service_wait_time: 10.0
+    exploration_wait_time: 1.0
+    max_exploration_wait_time: 30.0
+    navigation_check_interval: 2.0
+    executor_threads: 4

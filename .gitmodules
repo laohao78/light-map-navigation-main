@@ -1,0 +1,35 @@
+[submodule "src/sensor_driver/livox_ros_driver2_humble"]
+	path = src/sensor_driver/livox_ros_driver2_humble
+	url = https://gitee.com/SMBU-POLARBEAR/livox_ros_driver2_humble.git
+	shallow = true
+	ignore = dirty
+[submodule "src/classic_navigation/teb_local_planner"]
+	path = src/classic_navigation/teb_local_planner
+	url = https://github.com/rst-tu-dortmund/teb_local_planner.git
+	branch = ros2-master
+	shallow = true
+	ignore = dirty
+[submodule "src/classic_navigation/costmap_converter"]
+	path = src/classic_navigation/costmap_converter
+	url = https://github.com/LihanChen2004/costmap_converter.git
+	branch = RM2024_SMBU_auto_sentry
+	shallow = true
+	ignore = dirty
+[submodule "src/classic_localization/FAST_LIO"]
+	path = src/classic_localization/FAST_LIO
+	url = https://github.com/LihanChen2004/FAST_LIO.git
+	branch = RM2024_SMBU_auto_sentry
+	shallow = true
+	ignore = dirty
+[submodule "src/classic_localization/point_lio"]
+	path = src/classic_localization/point_lio
+	url = https://github.com/LihanChen2004/Point-LIO.git
+	branch = RM2024_SMBU_auto_sentry
+	shallow = true
+	ignore = dirty
+[submodule "src/grounded_sam2/grounded_sam2/grounded_sam2"]
+	path = src/grounded_sam2/grounded_sam2/grounded_sam2
+	url = https://github.com/KEEPSLAMDUNK/grounded_sam2.git
+	branch = main
+	shallow = true
+	ignore = dirty

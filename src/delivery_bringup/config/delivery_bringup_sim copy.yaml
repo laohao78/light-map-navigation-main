@@ -1,0 +1,48 @@
+/entrance_exploration_action_server:
+  ros__parameters:
+    osm_file_path: '/workspaces/light-map-navigation/src/llm_exploration_py/OSM/medium.osm'
+    exploration_radius: 2.0
+    exploration_points: 5
+    camera_topic: '/camera_sensor/image_raw'
+    map_frame: 'map'
+    bk_frame: 'base_link'
+    transform_matrix: [1.0, 0.0, -500000.0, 0.0, 1.0, -4483000.0, 0.0, 0.0, 1.0]
+    navigation_feedback_interval: 2.0
+    service_timeout: 1.0
+
+delivery_executor_action_server:
+  ros__parameters:
+    osm_file_path: "medium.osm"
+    osm_routing_url: "http://127.0.0.1:5000/route/v1/driving/"
+    # osm_routing_url: "http://101.200.33.217:30457/route/v1/driving/"
+    transform_matrix: [1.0, 0.0, 500000.0, 0.0, 1.0, 4483000.0, 0.0, 0.0, 1.0]
+    service_wait_time: 1.0
+    max_service_wait_time: 10.0
+    exploration_wait_time: 1.0
+    max_exploration_wait_time: 30.0
+    navigation_check_interval: 2.0
+    executor_threads: 4
+
+waypoint_replanner_server:
+  ros__parameters:
+    # Map and planning parameters
+    local_range: 20.0           # Local map range in meters
+    resolution: 0.05            # Map resolution in meters/pixel
+    inflation_radius: 0.2       # Obstacle inflation radius in meters
+    
+    # Height filter parameters
+    height_filter_min: -1.0     # Minimum height for point cloud filtering in meters
+    height_filter_max: 0.5      # Maximum height for point cloud filtering in meters
+    
+    # Path optimization parameters
+    search_radius: 5.0          # Search radius for obstacle detection in meters
+    num_radius_samples: 5       # Number of radius samples for path optimization
+    num_angle_samples: 11       # Number of angle samples for path optimization
+    max_sample_radius: 5.0      # Maximum sampling radius in meters
+    angle_range: 0.785398      # Angle range for sampling (pi/4 radians)
+    
+    # Cost weights for path optimization [obstacle, smoothness, position]
+    cost_weights: [0.2, 0.6, 0.2]
+    
+    # Visualization parameters
+    enable_visualization: false           # Enable/disable visualization

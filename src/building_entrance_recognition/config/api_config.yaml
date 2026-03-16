@@ -1,0 +1,4 @@
+vlm_api:
+  key: "sk-byamdhnieyhwhzkyaerrmqjasuzpggzxrlolvxlfzbyywpdu"
+  base_url: "https://api.siliconflow.cn/v1"
+  model_name: "Qwen/Qwen3-Omni-30B-A3B-Captioner" 
