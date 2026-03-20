@@ -1,0 +1,39 @@
+<?xml version="1.0" ?>
+<sdf version="1.6">
+  <model name="text_model3">
+    <static>true</static>
+    <link name="link">
+      <collision name="collision">
+        <geometry>
+          <mesh>
+            <scale>0.5 0.5 0.5</scale>
+            <uri>model://text_model3/meshes/fire2.dae</uri>
+          </mesh>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>1.2</mu>
+              <mu2>1.2</mu2>
+            </ode>
+          </friction>
+        </surface>
+      </collision>
+      <visual name="visual">
+        <geometry>
+          <mesh>
+            <scale>0.5 0.5 0.5</scale>
+            <uri>model://text_model3/meshes/fire2.dae</uri>
+          </mesh>
+        </geometry>
+         <material>
+          <script>
+            <uri>model://text_model3/materials/scripts</uri>
+            <uri>model://text_model3/materials/textures</uri>
+            <name>fire3/object</name>
+          </script>
+        </material>
+      </visual>
+    </link>
+  </model>
+</sdf>

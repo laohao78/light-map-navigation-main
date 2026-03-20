@@ -1,0 +1,14 @@
+material fire3/object
+{
+  receive_shadows off
+  technique
+  {
+    pass
+    {
+      texture_unit
+      {
+        texture fire3.jpg
+      }
+    }
+  }
+}

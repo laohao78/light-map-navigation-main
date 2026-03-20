@@ -3,7 +3,7 @@ grounded_sam2_node:
     gsam2:
       scale: 1.0
       do_sharpen: false
-      base_path: "/home/rm123/Desktop/openbench/light-map-navigation-main/src/grounded_sam2/grounded_sam2/grounded_sam2/"
+      base_path: "src/grounded_sam2/grounded_sam2/grounded_sam2/"
       text_prompt: "ground . car . building"
       sam2_checkpoint: "./checkpoints/sam2.1_hiera_small.pt"
       sam2_model_config: "sam2/configs/sam2.1/sam2.1_hiera_s.yaml"

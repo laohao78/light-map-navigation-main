@@ -92,11 +92,11 @@ public:
   //! Update internal parameters
   void updateParameters(const cv::SimpleBlobDetector::Params& parameters);
 
-  virtual void setParams(const cv::SimpleBlobDetector::Params& params) override {
+  virtual void setParams(const cv::SimpleBlobDetector::Params& params)  {
       params_ = params;
   }
 
-  virtual cv::SimpleBlobDetector::Params getParams() const override {
+  virtual cv::SimpleBlobDetector::Params getParams() const  {
       return params_;
   }
 

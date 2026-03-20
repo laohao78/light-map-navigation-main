@@ -1,0 +1,1 @@
+curl "http://127.0.0.1:5000/route/v1/driving/116.9998,40.4977;117.0004,40.4979?overview=full&geometries=geojson" -o osrm_route.json
