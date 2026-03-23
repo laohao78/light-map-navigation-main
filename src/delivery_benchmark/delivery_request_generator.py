@@ -44,50 +44,50 @@ def generate_delivery_instructions(num_instructions, instructions_per_block):
     # }
 
     # for medium
-    # building_units = {
-    #     "building1": ['unit1', 'unit2'],
-    #     "building2": ['unit1'],
-    #     "building3": ['unit1', 'unit2'],
-    #     "building4": ['unit1', 'unit2'],
-    #     "building5": ['unit1', 'unit2'],
-    #     "building6": ['unit1', 'unit2'],
-    #     "building7": ['unit1', 'unit2'],
-    #     "building8": ['unit1', 'unit2', 'unit3'],
-    #     "building9": ['unit1', 'unit2'],
-    #     "building10": ['unit1', 'unit2', 'unit3'],
-    #     "building11": ['unit1', 'unit2', 'unit3'],
-    #     "building12": ['unit1', 'unit2', 'unit3'],
-    #     "building13": ['unit1', 'unit2', 'unit3'],
-    #     "building14": ['unit1', 'unit2'],
-    # }
-    # building_units_coords = {
-    #     "building1": ['(-28.63, 29.34)', '(-24.94, 28.68)'],
-    #     "building2": ['(-25.54, 9.27)'],
-    #     "building3": ['(-34.89, -8.06)', '(-25.32, -7.53)'],
-    #     "building4": ['(-34.69, -19.47)', '(-32.10, -20.92)'],
-    #     "building5": ['(-24.44, -21.21)', '(-27.03, -19.76)'],
-    #     "building6": ['(-29.96, -34.22)', '(-28.51, -31.63)'],
-    #     "building7": ['(9.50, 25.45)', '(-6.49, 24.51)'],
-    #     "building8": ['(-0.96, 7.53)', '(8.51, 7.97)', '(13.38, 7.57)'],
-    #     "building9": ['(24.48, 8.08)', '(29.52, 8.06)'],
-    #     "building10": ['(0.65, -15.58)', '(1.19, -12.14)', '(3.83, -16.40)'],
-    #     "building11": ['(0.85, -27.57)', '(-2.59, -27.03)', '(1.66, -24.35)'],
-    #     "building12": ['(13.18, -29.07)', '(13.47, -25.23)', '(16.08, -29.87)'],
-    #     "building13": ['(27.28, -29.19)', '(27.64, -25.31)', '(30.52, -30.19)'],
-    #     "building14": ['(28.67, -17.74)', '(28.69, -10.10)'],
-    # }
-
-    # for small
     building_units = {
         "building1": ['unit1', 'unit2'],
-        "building2": ['unit1', 'unit2'],
-        "building3": ['unit1', 'unit2', 'unit3'],
+        "building2": ['unit1'],
+        "building3": ['unit1', 'unit2'],
+        "building4": ['unit1', 'unit2'],
+        "building5": ['unit1', 'unit2'],
+        "building6": ['unit1', 'unit2'],
+        "building7": ['unit1', 'unit2'],
+        "building8": ['unit1', 'unit2', 'unit3'],
+        "building9": ['unit1', 'unit2'],
+        "building10": ['unit1', 'unit2', 'unit3'],
+        "building11": ['unit1', 'unit2', 'unit3'],
+        "building12": ['unit1', 'unit2', 'unit3'],
+        "building13": ['unit1', 'unit2', 'unit3'],
+        "building14": ['unit1', 'unit2'],
     }
     building_units_coords = {
-        "building1": ['(-3.91, 5.12)', '(-6.71, 6.64)'],
-        "building2": ['(2.10, 6.23)', '(5.90, 5.78)'],
-        "building3": ['(-3.50, -10.00)', '(4.27, -12.60)', '(-1.90, -5.70)'],
+        "building1": ['(-28.63, 29.34)', '(-24.94, 28.68)'],
+        "building2": ['(-25.54, 9.27)'],
+        "building3": ['(-34.89, -8.06)', '(-25.32, -7.53)'],
+        "building4": ['(-34.69, -19.47)', '(-32.10, -20.92)'],
+        "building5": ['(-24.44, -21.21)', '(-27.03, -19.76)'],
+        "building6": ['(-29.96, -34.22)', '(-28.51, -31.63)'],
+        "building7": ['(9.50, 25.45)', '(-6.49, 24.51)'],
+        "building8": ['(-0.96, 7.53)', '(8.51, 7.97)', '(13.38, 7.57)'],
+        "building9": ['(24.48, 8.08)', '(29.52, 8.06)'],
+        "building10": ['(0.65, -15.58)', '(1.19, -12.14)', '(3.83, -16.40)'],
+        "building11": ['(0.85, -27.57)', '(-2.59, -27.03)', '(1.66, -24.35)'],
+        "building12": ['(13.18, -29.07)', '(13.47, -25.23)', '(16.08, -29.87)'],
+        "building13": ['(27.28, -29.19)', '(27.64, -25.31)', '(30.52, -30.19)'],
+        "building14": ['(28.67, -17.74)', '(28.69, -10.10)'],
     }
+
+    # for small
+    # building_units = {
+    #     "building1": ['unit1', 'unit2'],
+    #     "building2": ['unit1', 'unit2'],
+    #     "building3": ['unit1', 'unit2', 'unit3'],
+    # }
+    # building_units_coords = {
+    #     "building1": ['(-3.91, 5.12)', '(-6.71, 6.64)'],
+    #     "building2": ['(2.10, 6.23)', '(5.90, 5.78)'],
+    #     "building3": ['(-3.50, -10.00)', '(4.27, -12.60)', '(-1.90, -5.70)'],
+    # }
 
     # Define a list of items that can be delivered
     boxes = ["box", "package", "parcel", "item"]

@@ -1,0 +1,3 @@
+{"code":"Ok","routes":[{"geometry":{"coordinates":[
+    [116.999999,40.497703],[116.999815,40.497702],[116.999819,40.497944]
+    ],"type":"LineString"},"legs":[{"steps":[],"distance":42.5,"duration":8.2,"summary":"","weight":8.2}],"distance":42.5,"duration":8.2,"weight_name":"routability","weight":8.2}],"waypoints":[{"hint":"AAAAgAcAAIAWAAAAFAAAAAAAAAAtAAAAcal5QQa-V0EAAAAApVb4QRYAAAAUAAAAAAAAAC0AAAABAACAP0f5BifyaQI_R_kGKfJpAgAAnwUzftBI","distance":0.222084,"name":"road2","location":[116.999999,40.497703]},{"hint":"AQAAgAUAAIAmAAAAGwAAAAAAAAAAAAAAiP7WQVYJj0EAAAAAAAAAACYAAAAbAAAAAAAAAAAAAAABAACAi0b5BhjzaQIARvkGGfNpAgAADwAzftBI","distance":11.787929,"name":"road3","location":[116.999819,40.497944]}]}

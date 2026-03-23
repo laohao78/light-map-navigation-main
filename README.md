@@ -54,20 +54,3 @@ source install/setup.bash
 ros2 run delivery_executor delivery_executor_action_client
 ```
 
-### 5. Grounded-SAM-2
-```sh
-# Set up your proxy
-export https_proxy=http://127.0.0.1:7890 http_proxy=http://127.0.0.1:7890 all_proxy=socks5://127.0.0.1:7890
-
-# Download SAM2 checkpoints
-cd src/grounded_sam2/grounded_sam2/grounded_sam2/checkpoints
-bash download_ckpts.sh
-
-# Download GroundingDINO checkpoints
-cd src/grounded_sam2/grounded_sam2/grounded_sam2/gdino_checkpoints
-bash download_ckpts.sh
-
-# Run Grounded-SAM-2 server
-cd /workspaces/light-map-navigation
-ros2 launch grounded_sam2 gsam2_node.launch.py
-```

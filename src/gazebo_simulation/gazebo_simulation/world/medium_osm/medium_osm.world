@@ -313,43 +313,67 @@
 
 <!-- === 优化后的实例引用 (无碰撞，轻量级) === -->
 
-<!-- Text Model 1 Instances -->
-<include><uri>model://text_model1</uri><name>t1_0</name><pose>-28.626 29.3431 1.5636 0 -0 0</pose></include>
-<include><uri>model://text_model1</uri><name>t1_1</name><pose>-25.5396 9.27041 1.52314 0 -0 3.1384</pose></include>
-<include><uri>model://text_model1</uri><name>t1_2</name><pose>-34.6937 -19.4703 1.23472 0 -0 1.58393</pose></include>
-<include><uri>model://text_model1</uri><name>t1_3</name><pose>0.85316 -27.5651 1.06281 0 0 -1.57</pose></include>
-<include><uri>model://text_model1</uri><name>t1_4</name><pose>13.1838 -29.0718 1.3 0 -0 3.14</pose></include>
-<include><uri>model://text_model1</uri><name>t1_5</name><pose>27.2798 -29.1869 1.3 0 -0 3.14</pose></include>
-<include><uri>model://text_model1</uri><name>t1_6</name><pose>-24.4421 -21.2078 1.23942 0 0 -1.57</pose></include>
-<include><uri>model://text_model1</uri><name>t1_7</name><pose>-29.9588 -34.22 1.21346 0 -0 3.14</pose></include>
-<include><uri>model://text_model1</uri><name>t1_8</name><pose>-34.8868 -8.05648 1.65897 0 -0 0</pose></include>
-<include><uri>model://text_model1</uri><name>t1_9</name><pose>9.49647 25.4469 1.93202 0 0 -1.57</pose></include>
-<include><uri>model://text_model1</uri><name>t1_10</name><pose>-0.959037 7.52929 2.3312 0 -0 3.14</pose></include>
-<include><uri>model://text_model1</uri><name>t1_11</name><pose>24.485 8.07813 1.9831 0 -0 1.57</pose></include>
-<include><uri>model://text_model1</uri><name>t1_12</name><pose>28.6711 -17.7386 2.25038 0 -0 3.14</pose></include>
-<include><uri>model://text_model1</uri><name>t1_13</name><pose>0.6481 -15.5815 1.21912 0 -0 3.14</pose></include>
+<!-- Sorted Includes -->
 
-<!-- Text Model 2 Instances -->
-<include><uri>model://text_model2</uri><name>t2_0</name><pose>-24.9409 28.6794 1.57869 0 0 -1.52716</pose></include>
-<include><uri>model://text_model2</uri><name>t2_1</name><pose>-32.0989 -20.9209 1.20285 0 0 -1.56366</pose></include>
-<include><uri>model://text_model2</uri><name>t2_2</name><pose>-27.0336 -19.7574 1.20887 0 -0 1.57</pose></include>
-<include><uri>model://text_model2</uri><name>t2_3</name><pose>13.4714 -25.2341 1.3 0 -0 0</pose></include>
-<include><uri>model://text_model2</uri><name>t2_4</name><pose>27.6367 -25.3145 1.3 0 -0 0</pose></include>
-<include><uri>model://text_model2</uri><name>t2_5</name><pose>-28.5112 -31.6317 1.21235 0 -0 0</pose></include>
-<include><uri>model://text_model2</uri><name>t2_6</name><pose>-25.3234 -7.52915 1.96408 0 -0 0</pose></include>
-<include><uri>model://text_model2</uri><name>t2_7</name><pose>-6.48868 24.506 1.93221 0 -0 1.57</pose></include>
-<include><uri>model://text_model2</uri><name>t2_8</name><pose>8.51104 7.97486 1.5687 0 -0 3.14</pose></include>
-<include><uri>model://text_model2</uri><name>t2_9</name><pose>29.5159 8.05862 1.68793 0 0 -1.57</pose></include>
-<include><uri>model://text_model2</uri><name>t2_10</name><pose>28.6861 -10.0987 1.62563 0 -0 0</pose></include>
-<include><uri>model://text_model2</uri><name>t2_11</name><pose>1.18864 -12.1442 1.04206 0 -0 0</pose></include>
-<include><uri>model://text_model2</uri><name>t2_12</name><pose>-2.59305 -27.0309 1.08359 0 -0 1.57</pose></include>
+<!-- building1 -->
+<include><uri>model://text_model1</uri><name>building1_unit1</name><pose>-28.626 29.3431 1.5636 0 -0 0</pose></include>
+<include><uri>model://text_model2</uri><name>building1_unit2</name><pose>-24.9409 28.6794 1.57869 0 0 -1.52716</pose></include>
 
-<!-- Text Model 3 Instances -->
-<include><uri>model://text_model3</uri><name>t3_0</name><pose>16.0786 -29.8724 1.3 0 -0 3.14</pose></include>
-<include><uri>model://text_model3</uri><name>t3_1</name><pose>30.5156 -30.1889 1.3 0 -0 3.14</pose></include>
-<include><uri>model://text_model3</uri><name>t3_2</name><pose>13.3752 7.56599 2.29163 0 -0 3.14</pose></include>
-<include><uri>model://text_model3</uri><name>t3_3</name><pose>3.82571 -16.4045 0.823551 0 -0 3.14</pose></include>
-<include><uri>model://text_model3</uri><name>t3_4</name><pose>1.66214 -24.3491 0.831783 0 0 -1.57</pose></include>
+<!-- building2 -->
+<include><uri>model://text_model1</uri><name>building2_unit1</name><pose>-25.5396 9.27041 1.52314 0 -0 3.1384</pose></include>
+
+<!-- building3 -->
+<include><uri>model://text_model1</uri><name>building3_unit1</name><pose>-34.8868 -8.05648 1.65897 0 -0 0</pose></include>
+<include><uri>model://text_model2</uri><name>building3_unit2</name><pose>-25.3234 -7.52915 1.96408 0 -0 0</pose></include>
+
+<!-- building4 -->
+<include><uri>model://text_model1</uri><name>building4_unit1</name><pose>-34.6937 -19.4703 1.23472 0 -0 1.58393</pose></include>
+<include><uri>model://text_model2</uri><name>building4_unit2</name><pose>-32.0989 -20.9209 1.20285 0 0 -1.56366</pose></include>
+
+<!-- building5 -->
+<include><uri>model://text_model1</uri><name>building5_unit1</name><pose>-24.4421 -21.2078 1.23942 0 0 -1.57</pose></include>
+<include><uri>model://text_model2</uri><name>building5_unit2</name><pose>-27.0336 -19.7574 1.20887 0 -0 1.57</pose></include>
+
+<!-- building6 -->
+<include><uri>model://text_model1</uri><name>building6_unit1</name><pose>-29.9588 -34.22 1.21346 0 -0 3.14</pose></include>
+<include><uri>model://text_model2</uri><name>building6_unit2</name><pose>-28.5112 -31.6317 1.21235 0 -0 0</pose></include>
+
+<!-- building7 -->
+<include><uri>model://text_model1</uri><name>building7_unit1</name><pose>9.49647 25.4469 1.93202 0 0 -1.57</pose></include>
+<include><uri>model://text_model2</uri><name>building7_unit2</name><pose>-6.48868 24.506 1.93221 0 -0 1.57</pose></include>
+
+<!-- building8 -->
+<include><uri>model://text_model1</uri><name>building8_unit1</name><pose>-0.959037 7.52929 2.3312 0 -0 3.14</pose></include>
+<include><uri>model://text_model2</uri><name>building8_unit2</name><pose>8.51104 7.97486 1.5687 0 -0 3.14</pose></include>
+<include><uri>model://text_model3</uri><name>building8_unit3</name><pose>13.3752 7.56599 2.29163 0 -0 3.14</pose></include>
+
+<!-- building9 -->
+<include><uri>model://text_model1</uri><name>building9_unit1</name><pose>24.485 8.07813 1.9831 0 -0 1.57</pose></include>
+<include><uri>model://text_model2</uri><name>building9_unit2</name><pose>29.5159 8.05862 1.68793 0 0 -1.57</pose></include>
+
+<!-- building10 -->
+<include><uri>model://text_model1</uri><name>building10_unit1</name><pose>0.6481 -15.5815 1.21912 0 -0 3.14</pose></include>
+<include><uri>model://text_model2</uri><name>building10_unit2</name><pose>1.18864 -12.1442 1.04206 0 -0 0</pose></include>
+<include><uri>model://text_model3</uri><name>building10_unit3</name><pose>3.82571 -16.4045 0.823551 0 -0 3.14</pose></include>
+
+<!-- building11 -->
+<include><uri>model://text_model1</uri><name>building11_unit1</name><pose>0.85316 -27.5651 1.06281 0 0 -1.57</pose></include>
+<include><uri>model://text_model2</uri><name>building11_unit2</name><pose>-2.59305 -27.0309 1.08359 0 -0 1.57</pose></include>
+<include><uri>model://text_model3</uri><name>building11_unit3</name><pose>1.66214 -24.3491 0.831783 0 0 -1.57</pose></include>
+
+<!-- building12 -->
+<include><uri>model://text_model1</uri><name>building12_unit1</name><pose>13.1838 -29.0718 1.3 0 -0 3.14</pose></include>
+<include><uri>model://text_model2</uri><name>building12_unit2</name><pose>13.4714 -25.2341 1.3 0 -0 0</pose></include>
+<include><uri>model://text_model3</uri><name>building12_unit3</name><pose>16.0786 -29.8724 1.3 0 -0 3.14</pose></include>
+
+<!-- building13 -->
+<include><uri>model://text_model1</uri><name>building13_unit1</name><pose>27.2798 -29.1869 1.3 0 -0 3.14</pose></include>
+<include><uri>model://text_model2</uri><name>building13_unit2</name><pose>27.6367 -25.3145 1.3 0 -0 0</pose></include>
+<include><uri>model://text_model3</uri><name>building13_unit3</name><pose>30.5156 -30.1889 1.3 0 -0 3.14</pose></include>
+
+<!-- building14 -->
+<include><uri>model://text_model1</uri><name>building14_unit1</name><pose>28.6711 -17.7386 2.25038 0 -0 3.14</pose></include>
+<include><uri>model://text_model2</uri><name>building14_unit2</name><pose>28.6861 -10.0987 1.62563 0 -0 0</pose></include>
 
 <!-- ******************************************************************************************************************************** -->  
 <!-- ******************************************************************************************************************************** --> 
