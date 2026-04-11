@@ -25,6 +25,7 @@ setup(
         'console_scripts': [
             'delivery_executor_action_server = delivery_executor.delivery_executor_action_server:main',
             'delivery_executor_action_client = delivery_executor.delivery_executor_action_client:main',
+            'delivery_client_node = delivery_executor.delivery_client_node:main',
         ],
     },
 )

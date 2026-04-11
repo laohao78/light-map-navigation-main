@@ -55,3 +55,21 @@ source install/setup.bash
 ros2 run delivery_executor delivery_executor_action_client
 ```
 
+```sh
+# 终端1：启动仿真环境
+source install/setup.bash
+ros2 launch classic_nav_bringup bringup_sim.launch.py world:=MEDIUM_OSM mode:=nav lio:=fastlio localization:=icp lio_rviz:=False nav_rviz:=True use_sim_time:=True
+
+# 等待20秒后，终端2：启动配送系统
+source install/setup.bash
+ros2 launch delivery_bringup delivery_system_sim.launch.py
+
+# 等待5秒后，终端3：启动任务记录
+cd src/delivery_benchmark
+source ../../install/setup.bash
+python3 task_record.py --filename result/test.csv
+
+# 终端4：启动client
+source install/setup.bash
+ros2 run delivery_executor delivery_client_node " Please deliver this box into unit1, building14. Please deliver this parcel into unit2, building1."
+```

@@ -164,7 +164,7 @@ def main():
         rclpy.init()
         
         action_client = DeliveryExecutorActionClient()
-        action_client.send_goal("Please deliver this apple to unit 2 of building 14")
+        action_client.send_goal("Please deliver this apple to unit 2 of building 8")
         
         rclpy.spin(action_client)
         

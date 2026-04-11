@@ -1,4 +1,4 @@
 llm_api:
-  key: "sk-byamdhnieyhwhzkyaerrmqjasuzpggzxrlolvxlfzbyywpdu"
+  key: "sk-ckcptrwvhfkfnhpolgyymqoapueobvosofngiakxepijbdyz"
   base_url: "https://api.siliconflow.cn/v1"
-  model_name: "Qwen/Qwen3-8B"
+  model_name: "deepseek-ai/DeepSeek-R1-Distill-Qwen-14B"

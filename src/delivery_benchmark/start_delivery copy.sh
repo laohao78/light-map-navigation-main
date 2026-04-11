@@ -38,11 +38,11 @@ fi
 # 遍历文本文件中的每一行
 while IFS= read -r line || [[ -n "$line" ]]
 do
-  echo "【1】.Starting navigation and simulation environment..."
+  echo "Starting navigation and simulation environment..."
   
   # 启动机器人导航系统及仿真环境
   ros2 launch classic_nav_bringup bringup_sim.launch.py \
-    world:=MEDIUM_OSM \
+    world:=LARGE_OSM \
     mode:=nav \
     lio:=fastlio \
     localization:=icp \
@@ -54,32 +54,38 @@ do
   # 等待仿真环境启动完成
   sleep 20  # 根据实际需要调整时间
   
-  echo "【2】.Starting delivery_system_sim ..."
+  echo "Starting exploration nodes..."
   
-  # 启动快递系统
-  ros2 launch delivery_bringup delivery_system_sim.launch.py &
-  delivery_system_sim_pid=$!  # 获取快递系统进程ID
+  # 启动探索节点
+  ros2 run llm_exploration_py get_unit_num_service &
+  exploration_pid=$!  # 获取探索节点进程ID
   
-  # 等待快递系统启动
+  # 启动单元号识别节点
+  ros2 run llm_exploration_py find_unit_server &
+  find_unit_pid=$!  # 获取单元号识别节点进程ID
+  
+  # 等待探索和单元号识别节点启动
   sleep 5  # 根据实际需要调整时间
 
-  echo "【3】.Starting task record node..."
+  echo "Starting task record node..."
 
   python3 task_record.py --filename "$csv_file" &
-  task_record_pid=$!  # 获取任务记录节点进程ID
 
   sleep 1
   
-  echo "【4】.Starting delivery_client node with parameter: $line"
+  echo "Starting delivery service node with parameter: $line"
 
+  ros2 run llm_delivery robot_pose_pub_node &
+
+  sleep 1
+  
   # 启动配送服务节点并传递当前的指令
-  ros2 run delivery_executor delivery_client_node "$line" &
-  delivery_client_pid=$!  # 获取配送服务节点进程ID
+  ros2 run llm_delivery llm_delivery_node "$line" &
   
   # 等待配送任务完成
   sleep 1000  # 可根据实际任务的耗时调整
   
-  echo "【5】.Stopping delivery_system_sim and simulation environment..."
+  echo "Stopping exploration nodes and simulation environment..."
 
   kill $(pgrep rviz2)
 
