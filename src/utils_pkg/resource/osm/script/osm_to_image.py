@@ -129,6 +129,7 @@ building_units_coords = {
 fig, ax = plt.subplots(figsize=(10, 10))
 
 # --- 绘制建筑 ---
+buildings = []
 for way in root.findall('way'):
     tags = {t.get('k'): t.get('v') for t in way.findall('tag')}
     if tags.get('building') != 'yes':
@@ -139,6 +140,25 @@ for way in root.findall('way'):
     xs = [p[0] for p in pts]
     ys = [p[1] for p in pts]
     ax.fill(xs, ys, color='gray', alpha=0.3, edgecolor='black', linewidth=0.5)
+    center_x_poly = sum(xs) / len(xs)
+    center_y_poly = sum(ys) / len(ys)
+    building_name = tags.get('name', '')
+    buildings.append((building_name, center_y_poly, center_x_poly, center_y_poly))
+
+buildings.sort(key=lambda item: item[0])
+
+for building_name, _, center_x_poly, center_y_poly in buildings:
+    ax.text(
+        center_x_poly,
+        center_y_poly,
+        building_name,
+        fontsize=8,
+        color='black',
+        ha='center',
+        va='center',
+        zorder=20,
+        bbox=dict(facecolor='white', alpha=0.7, edgecolor='none', pad=1.0),
+    )
 
 # --- 绘制道路 ---
 for way in root.findall('way'):

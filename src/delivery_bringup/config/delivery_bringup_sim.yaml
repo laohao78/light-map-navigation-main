@@ -15,7 +15,7 @@ delivery_executor_action_server:
   ros__parameters:
     osm_file_path: 'src/utils_pkg/resource/osm/medium.osm'
     # 👇 这里改了 IP 地址，从 localhost 变为 WSL 的 IP
-    osm_routing_url: "http://10.246.75.175:5000/route/v1/driving/"
+    osm_routing_url: "http://10.219.235.175:5000/route/v1/driving/"
     transform_matrix: [1.0, 0.0, 500000.0, 0.0, 1.0, 4483000.0, 0.0, 0.0, 1.0]
     # transform_matrix: [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
     service_wait_time: 1.0

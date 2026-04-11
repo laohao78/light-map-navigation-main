@@ -29,7 +29,8 @@ bash sh/osrm_bringup.sh
 bash sh/osrm_test.sh
 bash sh/osrm_test1.sh
 # ------------------可视化---------------------
-python3 src/utils_pkg/resource/osm/osm_to_image_points.py
+cd src/utils_pkg/resource/osm/script/
+python3 osm_to_image.py
 ```
 
 ### 4. 启动快递系统

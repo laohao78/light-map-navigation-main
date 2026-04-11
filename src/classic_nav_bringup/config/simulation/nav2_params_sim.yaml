@@ -144,11 +144,11 @@ controller_server:
       #*******************************************************************************
       # Robot
       #*******************************************************************************
-      max_vel_x: 0.5                       #最大平移速度
+      max_vel_x: 0.8                       #最大平移速度
       max_vel_x_backwards: 0.2              #最大后退速度
-      max_vel_theta: 1.0                    #最大转向角速度
-      acc_lim_x: 1.5                        #最大平移加速度
-      acc_lim_theta: 1.6                    #最大角加速度
+      max_vel_theta: 1.5                    #最大转向角速度
+      acc_lim_x: 2.0                        #最大平移加速度
+      acc_lim_theta: 2.2                    #最大角加速度
       is_footprint_dynamic: False           #如果为真，在检查轨迹可行性之前更新足迹
       use_proportional_saturation: False    #如果为true，则按比例减少所有扭曲分量（线性x和y以及角度z）（如果任何扭曲分量超过其相应的界限），而不是单独饱和每个扭曲分量
       transform_tolerance: 0.5              #在TF树中查询转换时的容差（秒）
@@ -444,11 +444,11 @@ velocity_smoother:
     smoothing_frequency: 20.0
     scale_velocities: False
     feedback: "OPEN_LOOP"
-    max_velocity: [2.0, 2.0, 3.0]
-    min_velocity: [-2.0, -2.0, -3.0]
+    max_velocity: [3.0, 3.0, 4.0]
+    min_velocity: [-3.0, -3.0, -4.0]
     deadband_velocity: [0.0, 0.0, 0.0]
     velocity_timeout: 1.0
-    max_accel: [4.0, 4.0, 6.0]
-    max_decel: [-4.0, -4.0, -6.0]
+    max_accel: [5.0, 5.0, 7.0]
+    max_decel: [-5.0, -5.0, -7.0]
     odom_topic: "Odometry"
     odom_duration: 0.1

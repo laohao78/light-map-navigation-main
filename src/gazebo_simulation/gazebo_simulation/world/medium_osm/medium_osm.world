@@ -415,7 +415,9 @@
 <include><uri>model://house_2</uri><name>house_2_125</name><pose>1.61 -14.15 0 0 -0 3.14</pose></include>
 <include><uri>model://house_2</uri><name>house_2_125_clone</name><pose>14.3003 -27.3963 0 0 -0 3.14159</pose></include>
 <include><uri>model://house_2</uri><name>house_2_125_clone_clone</name><pose>28.4365 -27.4764 0 0 -0 3.14159</pose></include>
+<!--
 <include><uri>model://house_2</uri><name>house_2_125_clone_copy</name><pose>11.3102 -26.491 0 0 -0 3.14</pose></include>
+-->
 <include><uri>model://house_2</uri><name>house_2_126</name><pose>-0.59 -26.6 0 0 0 -1.57</pose></include>
 
 <!-- 房屋3 (House 3) -->
