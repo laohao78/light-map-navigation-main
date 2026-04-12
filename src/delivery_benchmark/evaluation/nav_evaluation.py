@@ -1,34 +1,63 @@
 import pandas as pd
 from math import sqrt
 
+
+def load_navigation_csv(file_path):
+    """读取导航CSV，并兼容有表头/无表头两种格式。"""
+    df = pd.read_csv(file_path)
+
+    if 'status' in df.columns and 'robot_x' in df.columns and 'robot_y' in df.columns:
+        return df
+
+    df = pd.read_csv(file_path, header=None)
+    base_columns = ['timestamp', 'status', 'task', 'robot_x', 'robot_y', 'robot_yaw']
+
+    if df.shape[1] <= len(base_columns):
+        df.columns = base_columns[:df.shape[1]]
+    else:
+        extra_columns = [f'extra_{i}' for i in range(df.shape[1] - len(base_columns))]
+        df.columns = base_columns + extra_columns
+
+    return df
+
 def extract_end_records(file_path):
     """从CSV文件中提取结束记录，并计算每段轨迹的长度"""
-    df = pd.read_csv(file_path)
+    df = load_navigation_csv(file_path)
+
+    if 'status' not in df.columns:
+        raise KeyError('CSV文件中未找到 status 列')
+    if 'robot_x' not in df.columns or 'robot_y' not in df.columns:
+        raise KeyError('CSV文件中未找到 robot_x 或 robot_y 列')
+
+    df = df.reset_index(drop=True)
+    df['robot_x'] = pd.to_numeric(df['robot_x'], errors='coerce')
+    df['robot_y'] = pd.to_numeric(df['robot_y'], errors='coerce')
+    df = df.dropna(subset=['status', 'robot_x', 'robot_y']).reset_index(drop=True)
 
     print(len(df))
 
     end_records = []
     track_lengths = []
-    current_track_length = 0.0
-    start_index = None
 
-    for i in range(len(df)):
-        if df.at[i, 'status'] == 'start':
-            if start_index is not None:  # 不是第一个start
-                # 保存前一段的结束记录和轨迹长度
-                end_records.append(df.iloc[i-1].to_dict())
-                track_lengths.append(current_track_length)
-            # 重置轨迹长度并记录新的start索引
-            current_track_length = 0.0
-            start_index = i
-        elif start_index is not None:  # 计算从当前start开始的轨迹长度
-            x1, y1 = df.at[i-1, 'robot_x'], df.at[i-1, 'robot_y']
-            x2, y2 = df.at[i, 'robot_x'], df.at[i, 'robot_y']
+    mission_start_indices = df.index[(df['status'] == 'start') & (df['task'].astype(str).str.contains('NAVIGATION', na=False))].tolist()
+
+    for mission_position, start_index in enumerate(mission_start_indices):
+        end_index = mission_start_indices[mission_position + 1] - 1 if mission_position + 1 < len(mission_start_indices) else len(df) - 1
+
+        if end_index < start_index:
+            continue
+
+        mission_df = df.iloc[start_index:end_index + 1].reset_index(drop=True)
+        if len(mission_df) == 0:
+            continue
+
+        current_track_length = 0.0
+        for i in range(1, len(mission_df)):
+            x1, y1 = mission_df.at[i - 1, 'robot_x'], mission_df.at[i - 1, 'robot_y']
+            x2, y2 = mission_df.at[i, 'robot_x'], mission_df.at[i, 'robot_y']
             current_track_length += sqrt((x2 - x1)**2 + (y2 - y1)**2)
-    
-    # 处理最后一段轨迹
-    if start_index is not None and df.iloc[-1]['status'] != 'start':
-        end_records.append(df.iloc[-1].to_dict())
+
+        end_records.append(mission_df.iloc[-1].to_dict())
         track_lengths.append(current_track_length)
 
     return end_records, track_lengths
@@ -39,7 +68,15 @@ def read_coordinates(file_path):
     with open(file_path, 'r') as file:
         for line in file:
             line = line.strip()
-            if line.startswith('(') and line.endswith(')'):
+            if not line:
+                continue
+
+            if ') (' in line:
+                for coord in line.split(') ('):
+                    coord = coord.strip('()')
+                    x, y = map(float, coord.split(','))
+                    coordinates.append((x, y))
+            elif line.startswith('(') and line.endswith(')'):
                 line = line[1:-1]
                 x, y = map(float, line.split(','))
                 coordinates.append((x, y))
@@ -93,8 +130,8 @@ def calculate_spl(track_lengths, origin_distances, errors, threshold=10):
     return spl
 
 # 使用方法：将file_path替换为你的文件路径
-csv_file_path = '/home/wjh/Study/light-map-navigation/src/delivery_benchmark/result/delivery_instructions3.csv'
-txt_file_path = '/home/wjh/Study/light-map-navigation/src/delivery_benchmark/data/delivery_instructions_gt3.txt'
+csv_file_path = '/home/rm123/Desktop/ROS2_LightMap_Delivery/src/delivery_benchmark/result/test_instructions.csv'
+txt_file_path = '/home/rm123/Desktop/ROS2_LightMap_Delivery/src/delivery_benchmark/data/test_instructions_gt.txt'
 
 # 从CSV文件提取结束记录和轨迹长度
 end_records, track_lengths = extract_end_records(csv_file_path)
