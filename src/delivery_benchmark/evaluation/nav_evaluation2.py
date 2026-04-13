@@ -20,6 +20,15 @@ def load_navigation_csv(file_path):
 
     return df
 
+
+def get_task_series(df):
+    """返回统一的任务列，兼容 task/address/缺失列。"""
+    if 'task' in df.columns:
+        return df['task'].astype(str)
+    if 'address' in df.columns:
+        return df['address'].astype(str)
+    return pd.Series([''] * len(df), index=df.index, dtype=str)
+
 def extract_end_records(file_path):
     """从CSV文件中提取结束记录，并计算每段轨迹的长度"""
     df = load_navigation_csv(file_path)
@@ -34,11 +43,14 @@ def extract_end_records(file_path):
     df['robot_y'] = pd.to_numeric(df['robot_y'], errors='coerce')
     df = df.dropna(subset=['status', 'robot_x', 'robot_y']).reset_index(drop=True)
 
-    print(len(df))
-
     end_records = []
     track_lengths = []
-    mission_start_indices = df.index[(df['status'] == 'start') & (df['task'].astype(str).str.contains('NAVIGATION', na=False))].tolist()
+    task_series = get_task_series(df)
+    navigation_mask = task_series.str.contains('NAVIGATION', na=False)
+    if navigation_mask.any():
+        mission_start_indices = df.index[(df['status'] == 'start') & navigation_mask].tolist()
+    else:
+        mission_start_indices = df.index[df['status'] == 'start'].tolist()
 
     for mission_position, start_index in enumerate(mission_start_indices):
         end_index = mission_start_indices[mission_position + 1] - 1 if mission_position + 1 < len(mission_start_indices) else len(df) - 1
@@ -149,8 +161,8 @@ def calculate_lspl(track_lengths, segment_distances, errors, threshold=10, r=0.9
     return LSPL
 
 # 使用方法：将file_path替换为你的文件路径
-csv_file_path = '/home/rm123/Desktop/ROS2_LightMap_Delivery/src/delivery_benchmark/result/test_instructions.csv'
-txt_file_path = '/home/rm123/Desktop/ROS2_LightMap_Delivery/src/delivery_benchmark/data/test_instructions_gt.txt'
+csv_file_path = '/home/rm123/Desktop/ROS2_LightMap_Delivery/src/delivery_benchmark/result/test2.csv'
+txt_file_path = '/home/rm123/Desktop/ROS2_LightMap_Delivery/src/delivery_benchmark/data/test2_gt.txt'
 
 # 从CSV文件提取结束记录和轨迹长度
 end_records, track_lengths = extract_end_records(csv_file_path)

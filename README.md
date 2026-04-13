@@ -31,6 +31,11 @@ bash sh/osrm_test1.sh
 # ------------------可视化---------------------
 cd src/utils_pkg/resource/osm/script/
 python3 osm_to_image.py
+# 记得改
+src/delivery_executor/delivery_executor/delivery_client_node.py
+src/delivery_bringup/config/delivery_bringup_sim.yaml
+# 里面有：
+osm_routing_url: "http://10.219.235.175:5001/route/v1/driving/"
 ```
 
 ### 4. 启动快递系统

@@ -30,7 +30,7 @@ class DeliveryClientNode(Node):
             'transform_matrix',
             [1.0, 0.0, 500000.0, 0.0, 1.0, 4483000.0, 0.0, 0.0, 1.0],
         )
-        self.declare_parameter('osm_routing_url', 'http://10.219.235.175:5000/route/v1/driving/')
+        self.declare_parameter('osm_routing_url', 'http://10.219.235.175:5001/route/v1/driving/')
 
         self.navigator = BasicNavigator()
         self.tf_buffer = Buffer()
