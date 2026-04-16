@@ -3,6 +3,16 @@
     osm_file_path: 'src/utils_pkg/resource/osm/medium.osm'
     exploration_radius: 2.0
     exploration_points: 5
+    exploration_strategy: 'mfvs' # baseline or mfvs
+    mfvs_distance_weight: 0.45
+    mfvs_saliency_weight: 0.32
+    mfvs_coverage_weight: 0.10
+    mfvs_novelty_weight: 0.05
+    mfvs_heading_weight: 0.04
+    mfvs_corner_weight: 0.04
+    mfvs_corner_saliency_threshold: 0.45
+    mfvs_candidate_offset_fraction: 0.35
+    mfvs_pruning_distance_factor: 0.75
     camera_topic: '/camera_sensor/image_raw'
     map_frame: 'map'
     bk_frame: 'base_link'

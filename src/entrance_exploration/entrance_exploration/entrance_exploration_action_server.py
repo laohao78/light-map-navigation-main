@@ -48,6 +48,16 @@ class EntranceExplorationActionServer(Node):
                 ('osm_file_path', '/workspaces/light-map-navigation/src/llm_exploration_py/OSM/medium.osm'),
                 ('exploration_radius', 2.0),
                 ('exploration_points', 5),
+                ('exploration_strategy', 'baseline'),
+                ('mfvs_distance_weight', 0.45),
+                ('mfvs_saliency_weight', 0.32),
+                ('mfvs_coverage_weight', 0.10),
+                ('mfvs_novelty_weight', 0.05),
+                ('mfvs_heading_weight', 0.04),
+                ('mfvs_corner_weight', 0.04),
+                ('mfvs_corner_saliency_threshold', 0.45),
+                ('mfvs_candidate_offset_fraction', 0.35),
+                ('mfvs_pruning_distance_factor', 0.75),
                 ('camera_topic', '/camera_sensor/image_raw'),
                 ('map_frame', 'map'),
                 ('bk_frame', 'base_link'),
@@ -65,9 +75,31 @@ class EntranceExplorationActionServer(Node):
         self.osm_file_path = self.get_parameter('osm_file_path').value
         self.exploration_radius = self.get_parameter('exploration_radius').value
         self.exploration_points = self.get_parameter('exploration_points').value
+        self.exploration_strategy = str(self.get_parameter('exploration_strategy').value).strip().lower()
+        self.mfvs_distance_weight = float(self.get_parameter('mfvs_distance_weight').value)
+        self.mfvs_saliency_weight = float(self.get_parameter('mfvs_saliency_weight').value)
+        self.mfvs_coverage_weight = float(self.get_parameter('mfvs_coverage_weight').value)
+        self.mfvs_novelty_weight = float(self.get_parameter('mfvs_novelty_weight').value)
+        self.mfvs_heading_weight = float(self.get_parameter('mfvs_heading_weight').value)
+        self.mfvs_corner_weight = float(self.get_parameter('mfvs_corner_weight').value)
+        self.mfvs_corner_saliency_threshold = float(self.get_parameter('mfvs_corner_saliency_threshold').value)
+        self.mfvs_candidate_offset_fraction = float(self.get_parameter('mfvs_candidate_offset_fraction').value)
+        self.mfvs_pruning_distance_factor = float(self.get_parameter('mfvs_pruning_distance_factor').value)
+        self.adaptive_distance_weight = self.mfvs_distance_weight
+        self.adaptive_diversity_weight = self.mfvs_saliency_weight
+        self.mfvs_diversity_weight = self.mfvs_saliency_weight
         self.camera_topic = self.get_parameter('camera_topic').value
         self.map_frame = self.get_parameter('map_frame').value
         self.bk_frame = self.get_parameter('bk_frame').value
+
+        if self.exploration_strategy == 'adaptive':
+            self.exploration_strategy = 'mfvs'
+
+        if self.exploration_strategy not in ('baseline', 'mfvs'):
+            self.get_logger().warn(
+                f"Unsupported exploration_strategy '{self.exploration_strategy}', falling back to baseline"
+            )
+            self.exploration_strategy = 'baseline'
         
         # Get new parameters
         transform_matrix_list = self.get_parameter('transform_matrix').value
@@ -109,8 +141,20 @@ class EntranceExplorationActionServer(Node):
         """Initialize state tracking variables"""
         self.latest_image = None
         self.cur_position = None
+        self.current_robot_heading = 0.0
+        self.current_building_center = None
         self.current_waypoint_index = 0
         self.waypoint_ = []
+        self.mfvs_candidates = []
+        self.remaining_waypoint_indices = []
+        self.mfvs_remaining_indices = []
+        self.mfvs_visited_positions = []
+        self.mfvs_visited_arc_positions = []
+        self.mfvs_visited_keys = set()
+        self.mfvs_last_goal_pose = None
+        self.mfvs_perimeter_length = 0.0
+        self.visited_waypoint_indices = set()
+        self.current_exploration_step = 0
         self.is_task_success = False
         self._cancel_requested = False
         self._current_goal_handle = None
@@ -119,6 +163,18 @@ class EntranceExplorationActionServer(Node):
         """Reset all state variables for new goal"""
         self.current_waypoint_index = 0
         self.waypoint_ = []
+        self.current_robot_heading = 0.0
+        self.current_building_center = None
+        self.mfvs_candidates = []
+        self.remaining_waypoint_indices = []
+        self.mfvs_remaining_indices = []
+        self.mfvs_visited_positions = []
+        self.mfvs_visited_arc_positions = []
+        self.mfvs_visited_keys = set()
+        self.mfvs_last_goal_pose = None
+        self.mfvs_perimeter_length = 0.0
+        self.visited_waypoint_indices = set()
+        self.current_exploration_step = 0
         self.is_task_success = False
         self._cancel_requested = False
         self._current_goal_handle = None
@@ -248,6 +304,347 @@ class EntranceExplorationActionServer(Node):
         """Reorder waypoints starting from a specific index."""
         return waypoints[start_index:] + waypoints[:start_index]
 
+    def _quaternion_to_yaw(self, quaternion):
+        siny_cosp = 2.0 * (quaternion.w * quaternion.z + quaternion.x * quaternion.y)
+        cosy_cosp = 1.0 - 2.0 * (quaternion.y * quaternion.y + quaternion.z * quaternion.z)
+        return atan2(siny_cosp, cosy_cosp)
+
+    def _normalize_angle(self, angle):
+        return (angle + np.pi) % (2.0 * np.pi) - np.pi
+
+    def _angular_distance(self, angle_a, angle_b):
+        return abs(self._normalize_angle(angle_a - angle_b))
+
+    async def _get_current_robot_state(self):
+        try:
+            transform: TransformStamped = await self.tf_buffer.lookup_transform_async(
+                self.map_frame,
+                self.bk_frame,
+                rclpy.time.Time())
+            self.cur_position = (
+                transform.transform.translation.x,
+                transform.transform.translation.y,
+            )
+            self.current_robot_heading = self._quaternion_to_yaw(transform.transform.rotation)
+        except Exception as e:
+            self.get_logger().warn(f'Failed to refresh robot pose, using last known pose: {str(e)}')
+        return self.cur_position, self.current_robot_heading
+
+    async def _get_current_robot_position(self):
+        """Backward-compatible alias for older call sites."""
+        robot_position, _ = await self._get_current_robot_state()
+        return robot_position
+
+    def _get_waypoint_heading(self, waypoint):
+        if self.current_building_center is None:
+            return 0.0
+        return atan2(
+            waypoint[1] - self.current_building_center[1],
+            waypoint[0] - self.current_building_center[0]
+        )
+
+    def _build_boundary_geometry(self, coordinates):
+        points = [np.asarray(point, dtype=float) for point in coordinates]
+        if len(points) > 1 and np.allclose(points[0], points[-1]):
+            points = points[:-1]
+
+        if len(points) < 2:
+            return points, points, [], [0.0]
+
+        closed_points = points + [points[0]]
+        segment_lengths = []
+        cumulative_lengths = [0.0]
+
+        for index in range(len(points)):
+            segment_length = float(np.linalg.norm(closed_points[index + 1] - closed_points[index]))
+            segment_lengths.append(segment_length)
+            cumulative_lengths.append(cumulative_lengths[-1] + segment_length)
+
+        return points, closed_points, segment_lengths, cumulative_lengths
+
+    def _calculate_vertex_saliency(self, coordinates):
+        if len(coordinates) < 3:
+            return [0.0 for _ in coordinates]
+
+        points = [np.asarray(point, dtype=float) for point in coordinates]
+        if np.allclose(points[0], points[-1]):
+            points = points[:-1]
+
+        saliency = []
+        for index in range(len(points)):
+            prev_point = points[index - 1]
+            current_point = points[index]
+            next_point = points[(index + 1) % len(points)]
+
+            vec_prev = prev_point - current_point
+            vec_next = next_point - current_point
+            prev_norm = np.linalg.norm(vec_prev)
+            next_norm = np.linalg.norm(vec_next)
+
+            if prev_norm == 0.0 or next_norm == 0.0:
+                saliency.append(0.0)
+                continue
+
+            cosine = np.clip(np.dot(vec_prev, vec_next) / (prev_norm * next_norm), -1.0, 1.0)
+            interior_angle = np.arccos(cosine)
+            saliency.append(float(np.pi - interior_angle))
+
+        max_saliency = max(saliency) if saliency else 0.0
+        if max_saliency <= 0.0:
+            return [0.0 for _ in saliency]
+
+        return [value / max_saliency for value in saliency]
+
+    def _point_on_boundary(self, closed_points, segment_lengths, cumulative_lengths, target_distance):
+        perimeter = cumulative_lengths[-1]
+        if perimeter == 0.0:
+            return tuple(closed_points[0]), 0.0, 0
+
+        arc_distance = target_distance % perimeter
+        segment_index = 0
+        while segment_index < len(segment_lengths) - 1 and cumulative_lengths[segment_index + 1] < arc_distance:
+            segment_index += 1
+
+        segment_start = closed_points[segment_index]
+        segment_end = closed_points[segment_index + 1]
+        segment_length = segment_lengths[segment_index]
+        if segment_length == 0.0:
+            return tuple(segment_start), arc_distance, segment_index
+
+        ratio = (arc_distance - cumulative_lengths[segment_index]) / segment_length
+        ratio = np.clip(ratio, 0.0, 1.0)
+        sampled_point = segment_start + ratio * (segment_end - segment_start)
+        return tuple(sampled_point), arc_distance, segment_index
+
+    def _deduplicate_candidates(self, candidates):
+        deduplicated = []
+        seen_keys = set()
+        dedup_resolution = max(0.25, 0.1 * max(self.exploration_points, self.exploration_radius, 1.0))
+        prune_radius = max(self.exploration_points * self.mfvs_pruning_distance_factor, self.exploration_radius * self.mfvs_pruning_distance_factor, 1.0)
+
+        for candidate in sorted(candidates, key=lambda item: (-item['saliency'], item['arc_length'])):
+            pose_x, pose_y, _ = candidate['pose']
+            candidate_key = (round(pose_x / dedup_resolution), round(pose_y / dedup_resolution))
+            if candidate_key in seen_keys:
+                continue
+            if any(
+                sqrt((pose_x - existing['pose'][0]) ** 2 + (pose_y - existing['pose'][1]) ** 2) < prune_radius * 0.45
+                for existing in deduplicated
+            ):
+                continue
+            seen_keys.add(candidate_key)
+            deduplicated.append(candidate)
+
+        return deduplicated
+
+    def _build_candidate_pool_mfvs(self, inflated_building, sample_distance):
+        polygon_points, closed_points, segment_lengths, cumulative_lengths = self._build_boundary_geometry(inflated_building)
+        perimeter = cumulative_lengths[-1]
+        if perimeter == 0.0:
+            return []
+
+        base_step = max(sample_distance, 1e-6)
+        fine_step = max(base_step * 0.5, self.exploration_radius)
+        candidate_distances = list(np.arange(0.0, perimeter, base_step))
+        candidate_distances += list(np.arange(base_step * 0.5, perimeter, fine_step))
+
+        center = np.mean(np.asarray(inflated_building), axis=0)
+        vertex_saliency = self._calculate_vertex_saliency(inflated_building)
+        candidates = []
+
+        for target_distance in candidate_distances:
+            waypoint, arc_length, segment_index = self._point_on_boundary(
+                closed_points,
+                segment_lengths,
+                cumulative_lengths,
+                target_distance,
+            )
+            yaw = self.calculate_yaw(waypoint, center)
+            nearest_vertex_index = min(
+                range(len(polygon_points)),
+                key=lambda index: np.linalg.norm(
+                    np.asarray(polygon_points[index], dtype=float) - np.asarray(waypoint, dtype=float)
+                ),
+            )
+            saliency = vertex_saliency[nearest_vertex_index] if vertex_saliency else 0.0
+            candidates.append({
+                'pose': (float(waypoint[0]), float(waypoint[1]), float(yaw)),
+                'saliency': float(saliency),
+                'arc_length': float(arc_length),
+                'segment_length': float(segment_lengths[segment_index] if segment_index < len(segment_lengths) else 0.0),
+                'corner_focus': bool(saliency >= self.mfvs_corner_saliency_threshold),
+            })
+
+        if candidates:
+            salient_vertices = [index for index, value in enumerate(vertex_saliency) if value >= self.mfvs_corner_saliency_threshold]
+            for vertex_index in salient_vertices:
+                vertex_arc = cumulative_lengths[min(vertex_index, len(cumulative_lengths) - 2)]
+                for offset_ratio in (-self.mfvs_candidate_offset_fraction, 0.0, self.mfvs_candidate_offset_fraction):
+                    waypoint, arc_length, segment_index = self._point_on_boundary(
+                        closed_points,
+                        segment_lengths,
+                        cumulative_lengths,
+                        vertex_arc + offset_ratio * base_step,
+                    )
+                    yaw = self.calculate_yaw(waypoint, center)
+                    candidates.append({
+                        'pose': (float(waypoint[0]), float(waypoint[1]), float(yaw)),
+                        'saliency': float(vertex_saliency[vertex_index]),
+                        'arc_length': float(arc_length),
+                        'segment_length': float(segment_lengths[segment_index] if segment_index < len(segment_lengths) else 0.0),
+                        'corner_focus': True,
+                    })
+
+        deduplicated_candidates = self._deduplicate_candidates(candidates)
+        self.get_logger().info(
+            f"MFVS candidate pool built: raw={len(candidates)}, deduplicated={len(deduplicated_candidates)}, "
+            f"corner_threshold={self.mfvs_corner_saliency_threshold:.2f}"
+        )
+        return deduplicated_candidates
+
+    def _score_mfvs_candidate(self, candidate, robot_position, robot_heading):
+        candidate_x, candidate_y, candidate_yaw = candidate['pose']
+        distance = sqrt((candidate_x - robot_position[0])**2 + (candidate_y - robot_position[1])**2)
+        distance_scale = max(self.exploration_points, self.exploration_radius, 1.0)
+        if distance < max(0.75, 0.15 * distance_scale):
+            return float('-inf')
+        distance_score = min(distance / distance_scale, 1.0)
+
+        if self.mfvs_visited_arc_positions:
+            arc_deltas = [abs(candidate['arc_length'] - arc) for arc in self.mfvs_visited_arc_positions]
+            coverage_gap = min(min(delta, self.mfvs_perimeter_length - delta) for delta in arc_deltas) / (0.5 * max(self.mfvs_perimeter_length, 1e-6))
+            coverage_score = max(0.0, min(coverage_gap, 1.0))
+        else:
+            coverage_score = 1.0
+
+        if self.mfvs_visited_positions:
+            nearest_visit = min(
+                sqrt((candidate_x - visited_x) ** 2 + (candidate_y - visited_y) ** 2)
+                for visited_x, visited_y in self.mfvs_visited_positions
+            )
+            novelty_score = max(0.0, min(nearest_visit / max(distance_scale, 1e-6), 1.0))
+        else:
+            novelty_score = 1.0
+
+        heading_error = self._angular_distance(robot_heading, candidate_yaw)
+        heading_score = 1.0 - min(heading_error / np.pi, 1.0)
+        corner_score = 1.0 if candidate.get('corner_focus', False) else 0.0
+        saliency_score = candidate.get('saliency', 0.0)
+
+        return (
+            self.mfvs_distance_weight * distance_score
+            + self.mfvs_saliency_weight * saliency_score
+            + self.mfvs_coverage_weight * coverage_score
+            + self.mfvs_novelty_weight * novelty_score
+            + self.mfvs_heading_weight * heading_score
+            + self.mfvs_corner_weight * corner_score
+        )
+
+    def _mfvs_candidate_key(self, candidate):
+        pose_x, pose_y, _ = candidate['pose']
+        resolution = max(0.25, 0.1 * max(self.exploration_points, self.exploration_radius, 1.0))
+        return (round(pose_x / resolution), round(pose_y / resolution))
+
+    def _mfvs_discard_candidate(self, selected_candidate_index):
+        selected_candidate = self.mfvs_candidates[selected_candidate_index]
+        selected_pose = selected_candidate['pose']
+        selected_key = self._mfvs_candidate_key(selected_candidate)
+        prune_radius = max(
+            1.0,
+            self.exploration_points * self.mfvs_pruning_distance_factor,
+            self.exploration_radius * self.mfvs_pruning_distance_factor,
+        )
+
+        self.get_logger().info(
+            f"MFVS discard: index={selected_candidate_index}, pose=({selected_pose[0]:.2f}, {selected_pose[1]:.2f}), "
+            f"key={selected_key}, prune_radius={prune_radius:.2f}, remaining_before={len(self.mfvs_remaining_indices)}"
+        )
+        self.mfvs_visited_keys.add(selected_key)
+        self.mfvs_remaining_indices = [
+            candidate_index
+            for candidate_index in self.mfvs_remaining_indices
+            if candidate_index != selected_candidate_index
+            and self._mfvs_candidate_key(self.mfvs_candidates[candidate_index]) != selected_key
+            and sqrt(
+                (self.mfvs_candidates[candidate_index]['pose'][0] - selected_pose[0]) ** 2 +
+                (self.mfvs_candidates[candidate_index]['pose'][1] - selected_pose[1]) ** 2
+            ) >= prune_radius
+        ]
+        self.get_logger().info(f"MFVS discard done: remaining_after={len(self.mfvs_remaining_indices)}")
+
+    async def _select_next_waypoint_index(self):
+        if self.exploration_strategy == 'baseline':
+            if not self.remaining_waypoint_indices:
+                return None
+            return self.remaining_waypoint_indices[0]
+
+        if not self.mfvs_remaining_indices:
+            return None
+
+        robot_position, robot_heading = await self._get_current_robot_state()
+        if robot_position is None:
+            robot_position = self.cur_position
+        if robot_position is None:
+            return self.mfvs_remaining_indices[0]
+
+        min_goal_separation = max(1.5, self.exploration_radius * 0.75)
+        available_indices = [
+            index for index in self.mfvs_remaining_indices
+            if self._mfvs_candidate_key(self.mfvs_candidates[index]) not in self.mfvs_visited_keys
+            and (
+                self.mfvs_last_goal_pose is None
+                or sqrt(
+                    (self.mfvs_candidates[index]['pose'][0] - self.mfvs_last_goal_pose[0]) ** 2 +
+                    (self.mfvs_candidates[index]['pose'][1] - self.mfvs_last_goal_pose[1]) ** 2
+                ) >= min_goal_separation
+            )
+        ]
+        if not available_indices:
+            self.get_logger().info(
+                f"MFVS select: no available indices after filtering, remaining={len(self.mfvs_remaining_indices)}, "
+                f"visited_keys={len(self.mfvs_visited_keys)}, last_goal={self.mfvs_last_goal_pose}"
+            )
+            return None
+
+        scored_candidates = []
+        for index in available_indices:
+            candidate = self.mfvs_candidates[index]
+            score = self._score_mfvs_candidate(candidate, robot_position, robot_heading)
+            scored_candidates.append((index, score, candidate['pose']))
+
+        best_index, best_score, best_pose = max(scored_candidates, key=lambda item: item[1])
+        if not np.isfinite(best_score) or best_score == float('-inf'):
+            self.get_logger().info(
+                f"MFVS select: no finite score candidates, robot=({robot_position[0]:.2f}, {robot_position[1]:.2f}), "
+                f"heading={robot_heading:.2f}, available={len(available_indices)}"
+            )
+            return None
+
+        self.get_logger().info(
+            f"MFVS select: remaining={len(self.mfvs_remaining_indices)}, available={len(available_indices)}, "
+            f"robot=({robot_position[0]:.2f}, {robot_position[1]:.2f}), last_goal={self.mfvs_last_goal_pose}, "
+            f"best_index={best_index}, best_pose=({best_pose[0]:.2f}, {best_pose[1]:.2f}), score={best_score:.4f}"
+        )
+        return best_index
+
+    def _prune_mfvs_candidates(self, selected_candidate_index):
+        selected_pose = self.mfvs_candidates[selected_candidate_index]['pose']
+        prune_radius = max(self.exploration_points * self.mfvs_pruning_distance_factor, self.exploration_radius * self.mfvs_pruning_distance_factor, 1.0)
+
+        self.mfvs_remaining_indices = [
+            candidate_index
+            for candidate_index in self.mfvs_remaining_indices
+            if sqrt(
+                (self.mfvs_candidates[candidate_index]['pose'][0] - selected_pose[0]) ** 2 +
+                (self.mfvs_candidates[candidate_index]['pose'][1] - selected_pose[1]) ** 2
+            ) >= prune_radius
+        ]
+
+    def _get_active_waypoint_pose(self, waypoint_index):
+        if self.exploration_strategy == 'baseline':
+            return self.waypoint_[waypoint_index]
+        return self.mfvs_candidates[waypoint_index]['pose']
+
     def get_exploration_waypoints(self, target_name, offset_distance, additional_distance, robot_position):
         """Generate exploration waypoints for a target building."""
         target_ways = [way for way in self.osm_handler.ways_info 
@@ -277,11 +674,27 @@ class EntranceExplorationActionServer(Node):
         evenly_sampled_waypoints = self.sample_waypoints_evenly(inflated_building, additional_distance)
         
         center = np.mean(coordinates, axis=0)
-        orientations = self.calculate_orientations(evenly_sampled_waypoints, center)
-        waypoints_with_yaw = [(x, y, yaw) for (x, y), yaw in zip(evenly_sampled_waypoints, orientations)]
-        
-        closest_index = self.get_closest_waypoint_index(waypoints_with_yaw, robot_position)
-        return self.reorder_waypoints(waypoints_with_yaw, closest_index)
+        self.current_building_center = tuple(center)
+
+        if self.exploration_strategy == 'baseline':
+            orientations = self.calculate_orientations(evenly_sampled_waypoints, center)
+            waypoints_with_yaw = [(x, y, yaw) for (x, y), yaw in zip(evenly_sampled_waypoints, orientations)]
+            closest_index = self.get_closest_waypoint_index(waypoints_with_yaw, robot_position)
+            return self.reorder_waypoints(waypoints_with_yaw, closest_index)
+
+        self.mfvs_candidates = self._build_candidate_pool_mfvs(inflated_building, additional_distance)
+        if not self.mfvs_candidates:
+            self.get_logger().warn('MFVS candidate pool is empty, falling back to baseline sampling')
+            orientations = self.calculate_orientations(evenly_sampled_waypoints, center)
+            waypoints_with_yaw = [(x, y, yaw) for (x, y), yaw in zip(evenly_sampled_waypoints, orientations)]
+            closest_index = self.get_closest_waypoint_index(waypoints_with_yaw, robot_position)
+            return self.reorder_waypoints(waypoints_with_yaw, closest_index)
+
+        self.mfvs_perimeter_length = max(candidate['arc_length'] for candidate in self.mfvs_candidates)
+        self.mfvs_remaining_indices = list(range(len(self.mfvs_candidates)))
+        self.mfvs_visited_positions = []
+        self.mfvs_visited_arc_positions = []
+        return [candidate['pose'] for candidate in self.mfvs_candidates]
 
     async def execute_callback(self, goal_handle):
         """Main execution callback for the action server"""
@@ -341,7 +754,10 @@ class EntranceExplorationActionServer(Node):
                     message="Failed to generate exploration waypoints"
                 )
 
+            self.remaining_waypoint_indices = list(range(len(self.waypoint_)))
+
             self.get_logger().debug(f"Generated waypoints: {self.waypoint_}")
+            self.get_logger().info(f'Exploration strategy: {self.exploration_strategy}')
                 
         except Exception as e:
             self.get_logger().error(f'Unexpected error: {str(e)}')
@@ -377,8 +793,44 @@ class EntranceExplorationActionServer(Node):
         feedback_msg = EntranceExploration.Feedback()
         
         try:
-            while self.current_waypoint_index < len(self.waypoint_) and not self._cancel_requested:
-                feedback_msg.status = f"Exploring waypoint {self.current_waypoint_index + 1}/{len(self.waypoint_)}"
+            while (self.remaining_waypoint_indices if self.exploration_strategy == 'baseline' else self.mfvs_remaining_indices) and not self._cancel_requested:
+                current_waypoint_index = await self._select_next_waypoint_index()
+                if current_waypoint_index is None:
+                    break
+
+                if self.exploration_strategy != 'baseline':
+                    current_candidate = self.mfvs_candidates[current_waypoint_index]
+                    current_position, _ = await self._get_current_robot_state()
+                    reference_position = current_position or self.cur_position
+                    if reference_position is not None:
+                        candidate_pose = current_candidate['pose']
+                        near_duplicate_distance = max(0.75, 0.15 * max(self.exploration_points, self.exploration_radius, 1.0))
+                        if sqrt((candidate_pose[0] - reference_position[0]) ** 2 + (candidate_pose[1] - reference_position[1]) ** 2) < near_duplicate_distance:
+                            self.get_logger().info(
+                                f"Skipping near-duplicate MFVS waypoint {current_waypoint_index}: ({candidate_pose[0]}, {candidate_pose[1]}), "
+                                f"robot=({reference_position[0]:.2f}, {reference_position[1]:.2f}), last_goal={self.mfvs_last_goal_pose}, "
+                                f"threshold={near_duplicate_distance:.2f}"
+                            )
+                            self._mfvs_discard_candidate(current_waypoint_index)
+                            self.mfvs_visited_positions.append(candidate_pose[:2])
+                            self.mfvs_visited_arc_positions.append(current_candidate['arc_length'])
+                            continue
+
+                self.current_waypoint_index = current_waypoint_index
+                self.current_exploration_step += 1
+
+                if self.exploration_strategy == 'baseline':
+                    self.visited_waypoint_indices.add(current_waypoint_index)
+                    self.remaining_waypoint_indices.remove(current_waypoint_index)
+                else:
+                    current_candidate = self.mfvs_candidates[current_waypoint_index]
+                    self._mfvs_discard_candidate(current_waypoint_index)
+                    self.mfvs_visited_positions.append(current_candidate['pose'][:2])
+                    self.mfvs_visited_arc_positions.append(current_candidate['arc_length'])
+
+                feedback_msg.status = (
+                    f"Exploring waypoint {self.current_exploration_step}"
+                )
                 goal_handle.publish_feedback(feedback_msg)
                 
                 if await self._navigate_to_waypoint(goal_handle):
@@ -388,7 +840,6 @@ class EntranceExplorationActionServer(Node):
                             success=True,
                             message="Successfully found the target entrance"
                         )
-                self.current_waypoint_index += 1
 
             # Check if the task was canceled
             if self._cancel_requested:
@@ -415,11 +866,12 @@ class EntranceExplorationActionServer(Node):
         Returns:
             bool: True if navigation succeeded, False otherwise
         """
-        waypoint = self.waypoint_[self.current_waypoint_index]
+        waypoint = self._get_active_waypoint_pose(self.current_waypoint_index)
+        self.mfvs_last_goal_pose = waypoint[:2]
         goal = self._create_pose_goal(waypoint)
         
         self.navigator.goToPose(goal)
-        self.get_logger().info(f"Sent waypoint {self.current_waypoint_index + 1}: ({waypoint[0]}, {waypoint[1]})")
+        self.get_logger().info(f"Sent waypoint {self.current_exploration_step}: ({waypoint[0]}, {waypoint[1]})")
         
         return await self._wait_for_navigation(goal_handle)
 
@@ -462,7 +914,7 @@ class EntranceExplorationActionServer(Node):
             nav_feedback = self.navigator.getFeedback()
             if nav_feedback:
                 feedback_msg.status = (
-                    f"Navigating to waypoint {self.current_waypoint_index + 1}/{len(self.waypoint_)}, "
+                    f"Navigating to waypoint {self.current_exploration_step}, "
                     f"Distance remaining: {nav_feedback.distance_remaining:.2f}m"
                 )
                 goal_handle.publish_feedback(feedback_msg)

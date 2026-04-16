@@ -161,7 +161,7 @@ def calculate_lspl(track_lengths, segment_distances, errors, threshold=10, r=0.9
     return LSPL
 
 # 使用方法：将file_path替换为你的文件路径
-csv_file_path = '/home/rm123/Desktop/ROS2_LightMap_Delivery/src/delivery_benchmark/result/test2.csv'
+csv_file_path = '/home/rm123/Desktop/ROS2_LightMap_Delivery/src/delivery_benchmark/result/test2_ada.csv'
 txt_file_path = '/home/rm123/Desktop/ROS2_LightMap_Delivery/src/delivery_benchmark/data/test2_gt.txt'
 
 # 从CSV文件提取结束记录和轨迹长度

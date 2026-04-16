@@ -142,8 +142,8 @@ def calculate_spl(track_lengths, origin_distances, errors, threshold=10):
     return spl
 
 # 使用方法：将file_path替换为你的文件路径
-csv_file_path = '/home/rm123/Desktop/ROS2_LightMap_Delivery/src/delivery_benchmark/result/test1.csv'
-txt_file_path = '/home/rm123/Desktop/ROS2_LightMap_Delivery/src/delivery_benchmark/data/test1_gt.txt'
+csv_file_path = '/home/rm123/Desktop/ROS2_LightMap_Delivery/src/delivery_benchmark/result/test2_ada.csv'
+txt_file_path = '/home/rm123/Desktop/ROS2_LightMap_Delivery/src/delivery_benchmark/data/test2_gt.txt'
 
 # 从CSV文件提取结束记录和轨迹长度
 end_records, track_lengths = extract_end_records(csv_file_path)
